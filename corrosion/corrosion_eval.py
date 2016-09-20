@@ -45,11 +45,11 @@ import corrosion
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_string('eval_dir', '/home/djatha/honors_thesis/tmp/corrosion_eval',
+tf.app.flags.DEFINE_string('eval_dir', '/home/djatha/honors_thesis/corrosion_smaller_dataset/corrosion_eval',
                            """Directory where to write event logs.""")
 tf.app.flags.DEFINE_string('eval_data', 'test',
                            """Either 'test' or 'train_eval'.""")
-tf.app.flags.DEFINE_string('checkpoint_dir', '/home/djatha/honors_thesis/tmp/corrosion_train',
+tf.app.flags.DEFINE_string('checkpoint_dir', '/home/djatha/honors_thesis/corrosion_smaller_dataset/corrosion_train',
                            """Directory where to read model checkpoints.""")
 tf.app.flags.DEFINE_integer('eval_interval_secs', 60 * 5,
                             """How often to run the eval.""")
@@ -95,8 +95,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
       step = 0
       while step < num_iter and not coord.should_stop():
         predictions = sess.run([top_k_op])
-        print(predictions)
-        #true_count += np.sum(predictions)
+        true_count += np.sum(predictions)
         step += 1
 
       # Compute precision @ 1.
@@ -126,8 +125,8 @@ def evaluate():
     logits = corrosion.inference(images)
 
     # Calculate predictions.
-    #top_k_op = tf.nn.in_top_k(logits, labels, 1)
-    top_k_op = tf.nn.top_k(logits)
+    top_k_op = tf.nn.in_top_k(logits, labels, 1)
+    #top_k_op = tf.nn.top_k(logits)
 
     # Restore the moving average version of the learned variables for eval.
     variable_averages = tf.train.ExponentialMovingAverage(
